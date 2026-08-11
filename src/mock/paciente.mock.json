@@ -1,0 +1,18 @@
+{ 
+    "nombre": "María González", 
+    "dni": "28765432", 
+    "direccion": { 
+        "calle": "Belgrano", 
+        "numero": "456", 
+        "barrio": "Norte" 
+    }, 
+    "email": "maria.gonzalez@hotmail.com", 
+    "telefono": { 
+        "tipo": "FIJO", 
+        "codigoArea": "3777", 
+        "numero": "4455667" }, 
+    "obraSocial": { 
+        "nombre": "PAMI", 
+        "numeroAfiliado": "PAM987654" 
+    } 
+}
