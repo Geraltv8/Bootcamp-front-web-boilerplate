@@ -3,11 +3,11 @@ import styles from './FormularioPaciente.module.scss';
 import JsonDebugger from '../utils/JsonDebugger';
 import { Button } from 'react-bootstrap';
 import { validarDatos } from '../utils/validaciones';
-import DatosPersonales from './DatosPersonales';
-import DireccionPaciente from './DireccionPaciente';
-import HistorialMedicoPaciente from './HistorialMedicoPaciente';
-import ObraSocialPaciente from './ObraSocialPaciente';
-import TelefonoPaciente from './TelefonoPaciente';
+import DatosPersonales from './components/DatosPersonales';
+import DireccionPaciente from './components/DireccionPaciente';
+import HistorialMedicoPaciente from './components/HistorialMedicoPaciente';
+import ObraSocialPaciente from './components/ObraSocialPaciente';
+import TelefonoPaciente from './components/TelefonoPaciente';
 
 const reglasPaciente = {
     nombre: (valor) => valor.trim() === "" ? "El nombre es obligatorio." : null,
