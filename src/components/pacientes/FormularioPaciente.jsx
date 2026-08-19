@@ -15,7 +15,6 @@ const reglasPaciente = {
     email: (valor) => !valor.includes("@") ? "Debe ser un correo valido. " : null
 };
 
-
 const FormularioPaciente = () => {
     const [paciente, setPaciente] = useState({
         nombre: "",
