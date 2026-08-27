@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { Container, Badge, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Badge, Row, Col, Card, Button, Placeholder } from "react-bootstrap";
+import { toast } from 'sonner';
 import clientesAxios from "../config/axios";
 
 const DashboardRecepcion = () => {
     const [busqueda, setBusqueda] = useState("");
     const [turnos, setTurnos] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const turnosFiltrados = turnos.filter(turno =>
         turno.paciente.nombre.toLocaleLowerCase().includes(busqueda.toLocaleLowerCase())
@@ -15,12 +17,17 @@ const DashboardRecepcion = () => {
         const obtenerTurnosDelBackend = async () => {
             try {
 
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
                 const respuesta = await clientesAxios.get('/turnos');
 
                 setTurnos(respuesta.data.data);
 
             } catch (error) {
                 console.error("hubo un error al sincronizar", error);
+                toast.error("Error de red: no se puede conectar al servidor");
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -28,12 +35,20 @@ const DashboardRecepcion = () => {
 
     }, []);
 
-    const marcarComoAtendido = (idTurno) => {
-        const turnosActualizados = turnos.map(turno => {
-            if (turno.id === idTurno) return { ...turno, estado: "Atendido"};
-            return turno;
-        });
-        setTurnos(turnosActualizados);
+    const marcarComoAtendido = async (idTurno) => {
+        try {
+            await clientesAxios.patch(`/turnos/${idTurno}`);
+
+            const turnosActualizados = turnos.map(turno => {
+                if (turno.id === idTurno) return { ...turno, estado: "atendido"};
+                return turno;
+            });
+            setTurnos(turnosActualizados);
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Error de red.");
+        }
     };
 
     return (
@@ -52,9 +67,25 @@ const DashboardRecepcion = () => {
             </Row>
 
             <Row>
-                {turnos.length === 0 ? (
+                {isLoading ? (
+                    [1, 2, 3].map((fantasma) => (
+                        <Col md={4} key={fantasma} className="mb-3">
+                            <Card>
+                                <Card.Body>
+                                    <Placeholder as={Card.Title} animation="glow">
+                                        <Placeholder xs={6} />
+                                    </Placeholder>
+                                    <Placeholder as="h5" animation="glow" className="mt-3">
+                                        <Placeholder xs={4} bg="warning" />
+                                    </Placeholder>
+                                    <Placeholder.Button variant="primary" xs={12} className="mt-2" disabled />
+                                </Card.Body>
+                            </Card>
+                        </Col> 
+                    ))
+                 ) : turnos.length === 0 ? (
                     
-                        <p>Cargando turnos del servidor...</p>
+                        <p>No se encontraron turnos pendientes.</p>
                     
                 ) : 
                 turnosFiltrados.map((turno) => (
@@ -62,19 +93,14 @@ const DashboardRecepcion = () => {
                         <Card>
                             <Card.Body>
                                 <Card.Title>{turno.paciente.nombre}</Card.Title>
-                                <h5>{turno.paciente.dni}</h5>
-                                <Card>
-                                     <h5>{turno.fechaTurno}</h5>
-                                     <h5>{turno.observaciones}</h5>
-                                </Card>
                                
                                 <h5 className="mt-3">
-                                    {turno.estado === 'Atendido' 
+                                    {turno.estado === 'atendido' 
                                         ? <Badge bg="success">Atendido</Badge> 
                                         : <Badge bg="warning" text="dark"> En Espera</Badge>
                                     }
                                 </h5>
-                                <Button onClick={() => marcarComoAtendido(turno.id)} disabled={turno.estado === 'Atendido'}>Llamar</Button>
+                                <Button onClick={() => marcarComoAtendido(turno.id)} disabled={turno.estado === 'atendido'}>Llamar</Button>
                             </Card.Body>
                         </Card>
                     </Col>
