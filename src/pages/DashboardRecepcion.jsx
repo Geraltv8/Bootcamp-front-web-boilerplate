@@ -10,7 +10,7 @@ import TurnoCardSkeleton from "../components/turnos/TurnoCardSkeleton";
 
 const DashboardRecepcion = () => {
     const [busqueda, setBusqueda] = useState("");
-    const { data: turnos, setData: setTurnos, isLoading } = useFetch('/turnos');
+    const { response: response, data: turnos, setData: setTurnos, isLoading } = useFetch('/turnos');
 
     const turnosFiltrados = turnos.filter(turno =>
         turno.paciente.nombre.toLocaleLowerCase().includes(busqueda.toLocaleLowerCase())
@@ -34,13 +34,13 @@ const DashboardRecepcion = () => {
 
     return (
         <Container className="mt-4">
-            <h2 className="mb-4">Turnos del Día</h2>
+            <h2 className="mb-4">Turnos del Día total: {response.total} </h2>
 
             <BuscadorTurnos valor={busqueda} alCambiar={setBusqueda} />
 
             <Row>
                 {isLoading ? (
-                    [1, 2, 3, 4].map(item => <TurnoCardSkeleton key={item} />) 
+                    [1, 2, 3].map(item => <TurnoCardSkeleton key={item} />) 
                  ) : turnos.length === 0 ? (
                     <p>No se encontraron turnos pendientes.</p>
                 ) : 
