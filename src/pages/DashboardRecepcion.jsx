@@ -1,39 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useFetch } from "../hooks/useFetch";
 import { Container, Badge, Row, Col, Card, Button, Placeholder } from "react-bootstrap";
 import { toast } from 'sonner';
 import clientesAxios from "../config/axios";
 
 const DashboardRecepcion = () => {
     const [busqueda, setBusqueda] = useState("");
-    const [turnos, setTurnos] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     const turnosFiltrados = turnos.filter(turno =>
         turno.paciente.nombre.toLocaleLowerCase().includes(busqueda.toLocaleLowerCase())
     );
 
-    useEffect(() => {
-    
-        const obtenerTurnosDelBackend = async () => {
-            try {
-
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                const respuesta = await clientesAxios.get('/turnos');
-
-                setTurnos(respuesta.data.data);
-
-            } catch (error) {
-                console.error("hubo un error al sincronizar", error);
-                toast.error("Error de red: no se puede conectar al servidor");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        obtenerTurnosDelBackend();
-
-    }, []);
+   const { data: turnos, setData: setTurnos, isLoading } = useFetch('/turnos');
 
     const marcarComoAtendido = async (idTurno) => {
         try {
@@ -54,17 +32,6 @@ const DashboardRecepcion = () => {
     return (
         <Container className="mt-4">
             <h2 className="mb-4">Turnos del Día</h2>
-            <Row className="mb-4">
-                <Col md={6}>
-                    <input 
-                        type="text"
-                        className="form-control"
-                        placeholder="Buscar Paciente..."
-                        value={busqueda}
-                        onChange={(evento) => setBusqueda(evento.target.value)}
-                    />
-                </Col>    
-            </Row>
 
             <Row>
                 {isLoading ? (
