@@ -13,7 +13,7 @@ const DashboardRecepcion = () => {
     const { response: response, data: turnos, setData: setTurnos, isLoading } = useFetch('/turnos');
 
     const turnosFiltrados = turnos.filter(turno =>
-        turno.paciente.nombre.toLocaleLowerCase().includes(busqueda.toLocaleLowerCase())
+        (turno.paciente?.nombre ?? "Paciente sin asignar").toLocaleLowerCase().includes(busqueda.toLocaleLowerCase())
     );
 
     const marcarComoAtendido = async (idTurno) => {
