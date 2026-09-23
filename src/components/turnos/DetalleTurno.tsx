@@ -1,12 +1,15 @@
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { Alert, Badge, Button, Card, Col, Container, ListGroup, Row, Spinner, Stack } from 'react-bootstrap';
+import { Alert, Badge, Card, Col, Container, ListGroup, Row, Spinner, Stack } from 'react-bootstrap';
 import { useFetch } from '../../hooks/useFetch';
+import { ITurno } from '../../types/Turno.type';
+
 
 const DetalleTurno = () => {
     const { id } = useParams();
-    const { data: turnos, isLoading } = useFetch(`/turnos/?id=${id}`);
-    const turno = turnos[0];
+    const { data: turno, isLoading } = useFetch<ITurno>(`/turnos/?id=${id}`);
+
+    console.log(`turno :${turno}`);
 
     if (isLoading) {
         return (
@@ -23,7 +26,7 @@ const DetalleTurno = () => {
                 <Alert variant="warning">
                     No se encontró el turno solicitado.
                 </Alert>
-                <Button as={Link} to="/" variant="outline-primary">Volver al dashboard</Button>
+                <Link to="/" className="btn btn-outline-primary">Volver al dashboard</Link>
             </Container>
         );
     }
@@ -94,7 +97,7 @@ const DetalleTurno = () => {
                 </Row>
             )}
 
-            <Button as={Link} to="/" variant="outline-secondary" className="mt-4">Volver al dashboard</Button>
+            <Link to="/" className="btn btn-outline-secondary mt-4">Volver al dashboard</Link>
         </Container>
     );
 };

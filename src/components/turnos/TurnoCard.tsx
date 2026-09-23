@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
+import { ITurno } from "../../types/Turno.type"
 import { Col, Card, Badge, Button, Stack } from "react-bootstrap";
 
-const TurnoCard = ({ turno, onAtender }) => {
+const TurnoCard = ({ turno, onAtender }: TurnoCardProps) => {
     const paciente = turno.paciente;
     const fecha = new Date(turno.fechaTurno);
 
@@ -30,9 +31,9 @@ const TurnoCard = ({ turno, onAtender }) => {
                 </Card.Body>
                 <Card.Footer className="bg-white border-0 px-3 pb-3">
                     <Stack direction="horizontal" gap={2}>
-                        <Button as={Link} to={`/turno-detalle/${turno.id}`} variant="outline-secondary" className="flex-grow-1">
+                        <Link to={`/turno-detalle/${turno.id}`} className="btn btn-outline-secondary flex-grow-1">
                             Ver detalle
-                        </Button>
+                        </Link>
                         <Button
                             onClick={() => onAtender(turno.id)}
                             disabled={turno.estado === "atendido" || !paciente}
@@ -46,5 +47,10 @@ const TurnoCard = ({ turno, onAtender }) => {
         </Col>
     );
 };
+
+interface TurnoCardProps {
+    turno: ITurno;
+    onAtender: (idTurno: string) => void;
+}
 
 export default TurnoCard;
