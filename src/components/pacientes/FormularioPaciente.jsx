@@ -118,21 +118,25 @@ const FormularioPaciente = () => {
                 />
                 <DireccionPaciente
                     direccion={paciente.direccion}
+                    errores={errores}
                     onChange={handleChange}
                     styles={styles}
                 />
                 <TelefonoPaciente
                     telefono={paciente.telefono}
+                    errores={errores}
                     onChange={handleChange}
                     styles={styles}
                 />
                 <ObraSocialPaciente
                     obraSocial={paciente.obraSocial}
+                    errores={errores}
                     onChange={handleChange}
                     styles={styles}
                 />
                 <HistorialMedicoPaciente
                     historialMedico={paciente.historialMedico}
+                    errores={errores}
                     onChange={handleChange}
                     styles={styles}
                 />
