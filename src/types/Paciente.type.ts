@@ -61,28 +61,25 @@ export enum TipoTelefono {
 }
 
 export const crearPacienteSchema = z.object({
-    body: z.object({
-        nombre: z.string().min(2, "el nombre es obligatorio"),
-        dni: z.string().min(7, "DNI invalido"),
-        direccion: direccionSchema,
-        email: z.email('Email invalido'),
-        telefono: z.object({
-            tipo: z.enum(TipoTelefono).optional().default(TipoTelefono.CELULAR),
-            codigoArea: z.string(),
-            numero: z.string()
-        }),
-        obraSocial: z.object({
-            nombre: z.enum(ObraSocial),
-            numeroAfiliado: z.string().optional().default("")
-        }),
-        historialMedico: z.object({
-            fecha: z.iso.date({ message: "formato de fecha invalido" }),
-            diagnostico: z.string(),
-            tratamiento: z.string(),
-            medico: z.string()
-        })
-    })
+    nombre: z.string().min(2, "el nombre es obligatorio"),
+    dni: z.string().min(7, "DNI invalido"),
+    direccion: direccionSchema,
+    email: z.email('Email invalido'),
+    telefono: z.object({
+        tipo: z.enum(TipoTelefono).optional().default(TipoTelefono.CELULAR),
+        codigoArea: z.string(),
+        numero: z.string()
+    }),
+    obraSocial: z.object({
+        nombre: z.enum(ObraSocial),
+        numeroAfiliado: z.string().optional().default("")
+    }),
+    historialMedico: z.object({
+        fecha: z.iso.date({ message: "formato de fecha invalido" }),
+        diagnostico: z.string(),
+        tratamiento: z.string(),
+        medico: z.string()
+    }) 
 });
 
-
-export type ICrearPacienteDTO = z.infer<typeof crearPacienteSchema>['body'];
+export type ICrearPacienteDTO = z.input<typeof crearPacienteSchema>;
