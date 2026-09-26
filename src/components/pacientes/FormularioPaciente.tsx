@@ -1,15 +1,18 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import styles from './FormularioPaciente.module.scss';
 import { Button } from 'react-bootstrap';
+import axios from 'axios';
+import clientesAxios from '../../config/axios';
 import DatosPersonales from './components/DatosPersonales';
 import DireccionPaciente from './components/DireccionPaciente';
 import HistorialMedicoPaciente from './components/HistorialMedicoPaciente';
 import ObraSocialPaciente from './components/ObraSocialPaciente';
 import TelefonoPaciente from './components/TelefonoPaciente';
+import JsonDebugger from '../utils/JsonDebugger';
 
-import { crearPacienteSchema, ICrearPacienteDTO } from '../../types/Paciente.type';
+import { crearPacienteSchema } from '../../types/Paciente.type';
+import type { ICrearPacienteDTO } from '../../types/Paciente.type';
 
 
 const FormularioPaciente = () => {
@@ -26,25 +29,15 @@ const FormularioPaciente = () => {
 
     const onSubmit = async (datosValidados: ICrearPacienteDTO) => {
         try {
-            const respuesta = await fetch("http://localhost:3000/api/v1/pacientes", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(datosValidados)
-            });
-
-            const data = await respuesta.json();
-
-            if (respuesta.ok) {
-                alert("Paciente guardado en base de datos");
-            } else {
-                alert("error del servidor: " + data.message + "errores: " +data.data);
-            }
+            await clientesAxios.post('/pacientes', datosValidados);
+            alert("Paciente guardado en base de datos");
 
         } catch (error) {
             console.error("Error de conexion", error);
-            alert("el servidor esta apagado o no responde");
+            const mensaje = axios.isAxiosError(error)
+                ? error.response?.data?.message ?? "Error del servidor"
+                : "el servidor esta apagado o no responde";
+            alert(mensaje);
         }
 
         console.log(datosValidados);
@@ -82,6 +75,7 @@ const FormularioPaciente = () => {
 
                 <Button type="submit">Guardar </Button>
             </form>
+            <JsonDebugger watch={watch} titulo="ESTADO DEL JSON" />
         </div>
     );
 };

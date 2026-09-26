@@ -1,5 +1,5 @@
-import NavbarPrincipal from "./NavbarPrincipal";
 import { Outlet } from "react-router-dom";
+import NavbarPrincipal from "./NavbarPrincipal";
 
 const LayoutPrincipal = () => {
     return (

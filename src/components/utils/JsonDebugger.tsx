@@ -1,4 +1,12 @@
-const JsonDebugger = ({ data, titulo = "Estado actual del JSON"}) => {
+import type { FieldValues, UseFormWatch } from 'react-hook-form';
+
+interface JsonDebuggerProps<T> {
+    watch: UseFormWatch<T & FieldValues>;
+    titulo?: string;
+}
+
+const JsonDebugger = <T,>({ watch, titulo = "Estado actual del JSON" }: JsonDebuggerProps<T>) => {
+    const data = watch();
     if (!data) return null;
 
     return (
@@ -11,13 +19,12 @@ const JsonDebugger = ({ data, titulo = "Estado actual del JSON"}) => {
             fontFamily: 'monospace',
             overflowX: 'auto'
         }}>
-            <p style={{ margin: '0 0 10px 0', color: '#fff', fontWeight: 'bold'}}>
+            <p style={{ margin: '0 0 10px 0', color: '#fff', fontWeight: 'bold' }}>
                 {titulo}
             </p>
             <pre style={{ margin: 0 }}>
                 {JSON.stringify(data, null, 2)}
             </pre>
-
         </div>
     );
 };

@@ -1,36 +1,5 @@
 import { z } from 'zod';
 
-export interface IPaciente {
-    direccion: {
-        calle: string;
-        numero: string;
-        piso: string;
-        departamento: string;
-        barrio: string;
-    };
-    telefono: {
-        tipo: string;
-        codigoArea: string;
-        numero: string;
-    };
-    obraSocial: {
-        nombre: string;
-        numeroAfiliado: string;
-    };
-    historialMedico: {
-        fecha: string;
-        diagnostico: string;
-        tratamiento: string;
-        medico: string;
-    };
-    nombre: string;
-    dni: string;
-    email: string;
-    createdAt: string;
-    updatedAt: string;
-    id: string;
-}
-
 export const direccionSchema = z.object({
     calle: z.string(),
     numero: z.string(),
@@ -60,6 +29,33 @@ export enum TipoTelefono {
     TRABAJO = 'TRABAJO',
 }
 
+export const pacienteSchema = z.object({
+    nombre: z.string(),
+    dni: z.string(),
+    direccion: direccionSchema,
+    email: z.email(),
+    telefono: z.object({
+        tipo: z.enum(TipoTelefono),
+        codigoArea: z.string(),
+        numero: z.string()
+    }),
+    obraSocial: z.object({
+        nombre: z.enum(ObraSocial),
+        numeroAfiliado: z.string()
+    }),
+    historialMedico: z.object({
+        fecha: z.string(),
+        diagnostico: z.string(),
+        tratamiento: z.string(),
+        medico: z.string()
+    }),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    id: z.string()
+});
+
+export type IPaciente = z.infer<typeof pacienteSchema>;
+
 export const crearPacienteSchema = z.object({
     nombre: z.string().min(2, "el nombre es obligatorio"),
     dni: z.string().min(7, "DNI invalido"),
@@ -75,7 +71,7 @@ export const crearPacienteSchema = z.object({
         numeroAfiliado: z.string().optional().default("")
     }),
     historialMedico: z.object({
-        fecha: z.iso.date({ message: "formato de fecha invalido" }),
+        fecha: z.date({ message: "formato de fecha invalido" }),
         diagnostico: z.string(),
         tratamiento: z.string(),
         medico: z.string()
