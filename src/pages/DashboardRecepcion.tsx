@@ -13,6 +13,7 @@ const DashboardRecepcion = () => {
     const [busqueda, setBusqueda] = useState<string>("");
     const { data: turnos, setData: setTurnos, isLoading } = useFetch<ITurno[]>('/turnos');
 
+    //@TODO: En algun momento, cambiar para que pacientes no pueda ser nullo
     const turnosFiltrados = (turnos || []).filter(turno =>
         (turno.paciente?.nombre ?? "Paciente sin asignar").toLocaleLowerCase().includes(busqueda.toLocaleLowerCase())
     );
