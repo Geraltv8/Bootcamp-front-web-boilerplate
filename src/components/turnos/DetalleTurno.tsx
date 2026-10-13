@@ -1,13 +1,16 @@
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { Alert, Badge, Card, Col, Container, ListGroup, Row, Spinner, Stack } from 'react-bootstrap';
+import { useState } from 'react';
+import { Alert, Badge, Card, Col, Container, Form, ListGroup, Row, Spinner, Stack } from 'react-bootstrap';
 import { useFetch } from '../../hooks/useFetch';
 import { ITurno } from '../../types/Turno.type';
+import GeneradorResumenIA from "./GeneradorResumenIA";
 
 
 const DetalleTurno = () => {
     const { id } = useParams();
     const { data: turno, isLoading } = useFetch<ITurno>(`/turnos/?id=${id}`);
+    const [notas, setNotas] = useState('');
 
     console.log(`turno :${turno}`);
 
@@ -96,6 +99,23 @@ const DetalleTurno = () => {
                     </Col>
                 </Row>
             )}
+
+            <Card className="mt-4 border-0 shadow-sm">
+                <Card.Body>
+                    <Form.Group controlId="notasTurno">
+                        <Form.Label className="fw-semibold">Notas del médico</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={5}
+                            value={notas}
+                            onChange={(event) => setNotas(event.target.value)}
+                            placeholder="Escriba las notas para generar un resumen..."
+                        />
+                    </Form.Group>
+                </Card.Body>
+            </Card>
+
+            <GeneradorResumenIA notasCrudas={notas} />
 
             <Link to="/" className="btn btn-outline-secondary mt-4">Volver al dashboard</Link>
         </Container>
