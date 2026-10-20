@@ -20,7 +20,7 @@
 ## Consumo de APIs y Red
 - **Cliente HTTP:** Todas las peticiones deben hacerse mediante la instancia global de `axios` (ej. `clientesAxios`). NUNCA usar `fetch` nativo.
 - **Seguridad:** Confía en los Interceptores de Axios ya configurados para inyectar el JWT (`Authorization: Bearer`) y para manejar cierres de sesión automáticos (Error 401). No inyectes el token manualmente en los componentes.
-- **Custom Hooks:** Toda llamada a la API debe encapsularse en Custom Hooks tipados con Genéricos (ej. `useFetch<ITurno[]>`). No realizar peticiones `axios.get` sueltas dentro de `useEffect` en los componentes de UI.
+- **Custom Hooks:** Toda llamada a la API debe encapsularse en Custom Hooks (si hace falta crear hooks nuevos) tipados con Genéricos (ej. `useFetch<ITurno[]>`). No realizar peticiones `axios.get` sueltas dentro de `useEffect` en los componentes de UI.
 
 ## Experiencia de Usuario (UX) y UI
 - **Estados Asíncronos:** Toda petición a la red debe tener un manejo de estado explícito. Utiliza `Skeletons` de React Bootstrap para estados de carga (`isLoading`), nunca dejes la pantalla en blanco.

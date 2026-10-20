@@ -1,10 +1,10 @@
 import { UseFormRegister, FieldErrors } from "react-hook-form";
-import { ICrearPacienteDTO } from "../../../types/Paciente.type";
+import type { ICrearPacienteDTO } from '../../../types/schemas/paciente.schema';
 
 interface Props {
     register: UseFormRegister<ICrearPacienteDTO>;
     errores: FieldErrors<ICrearPacienteDTO>;
-    styles: any;
+    styles: Record<string, string>;
 }
 
 const DatosPersonales = ({ register, errores, styles }: Props) => (

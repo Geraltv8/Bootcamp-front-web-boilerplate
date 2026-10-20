@@ -1,56 +1,52 @@
-import { Link } from "react-router-dom";
-import { ITurno } from "../../types/Turno.type"
-import { Col, Card, Badge, Button, Stack } from "react-bootstrap";
+import { Badge, Button, Card, Col, Stack } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import type { Turno } from '../../types/Api.type';
 
-const TurnoCard = ({ turno, onAtender }: TurnoCardProps) => {
-    const paciente = turno.paciente;
+interface TurnoCardProps {
+    turno: Turno;
+    isBusy: boolean;
+    onCambiarEstado: (estado: 'atendido' | 'ausente') => void;
+}
+
+const TurnoCard = ({ turno, isBusy, onCambiarEstado }: TurnoCardProps) => {
     const fecha = new Date(turno.fechaTurno);
-
+    const medico = typeof turno.medicoId === 'object' ? turno.medicoId : null;
+    const consultorio = typeof turno.consultorioId === 'object' ? turno.consultorioId : null;
+    const badgeColor = turno.estado === 'atendido'
+        ? 'success'
+        : turno.estado === 'ausente'
+            ? 'secondary'
+            : turno.estado === 'cancelado'
+                ? 'danger'
+                : 'warning';
     return (
-        <Col xs={12} md={6} lg={4} className="mb-4">
-            <Card className="h-100 border-0 shadow-sm">
-                <Card.Header className="bg-white border-0 pt-3 px-3">
+        <Col xs={12} md={6} lg={4} className="mb-3">
+            <Card className="h-100 shadow-sm border-0">
+                <Card.Body>
                     <Stack direction="horizontal" className="justify-content-between align-items-start">
-                        <Card.Title className="h5 mb-0">
-                            {paciente?.nombre ?? "Paciente sin asignar"}
-                        </Card.Title>
-                        <Badge bg={turno.estado === "atendido" ? "success" : "warning"} text={turno.estado === "atendido" ? undefined : "dark"}>
-                            {turno.estado === "atendido" ? "Atendido" : "En espera"}
-                        </Badge>
+                        <Card.Title className="h5">{turno.paciente?.nombre ?? 'Paciente no asignado'}</Card.Title>
+                        <Badge bg={badgeColor} text={badgeColor === 'warning' ? 'dark' : undefined}>{turno.estado}</Badge>
                     </Stack>
-                </Card.Header>
-                <Card.Body className="px-3 pt-2">
-                    <div className="text-body-secondary small mb-2">
-                        <strong className="text-dark text-capitalize">{turno.especialidad}</strong>
-                    </div>
-                    <div className="mb-2">
-                        <span className="fw-semibold">{fecha.toLocaleDateString("es-AR")}</span>
-                        <span className="text-body-secondary"> · {fecha.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })} hs</span>
-                    </div>
-                    {paciente?.dni && <div className="small text-body-secondary">DNI: {paciente.dni}</div>}
+                    {turno.paciente?.dni && <p className="small text-body-secondary mb-2">DNI: {turno.paciente.dni}</p>}
+                    <p className="mb-1"><strong>{fecha.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })} hs</strong> · {turno.especialidad}</p>
+                    {medico && <p className="small mb-1">Dr/a. {medico.nombre} {medico.apellido}</p>}
+                    <p className="small text-body-secondary mb-3">
+                        Consultorio: {consultorio?.nombre ?? 'A confirmar'}
+                        {consultorio?.piso ? ` · Piso ${consultorio.piso}` : ''}
+                    </p>
+                    <Stack direction="horizontal" gap={2} className="flex-wrap">
+                        <Link to={`/turno-detalle/${turno.id}`} className="btn btn-outline-secondary btn-sm">Detalle</Link>
+                        {turno.estado === 'pendiente' && (
+                            <>
+                                <Button size="sm" disabled={isBusy} onClick={() => onCambiarEstado('atendido')}>Atendido</Button>
+                                <Button size="sm" variant="outline-dark" disabled={isBusy} onClick={() => onCambiarEstado('ausente')}>Ausente</Button>
+                            </>
+                        )}
+                    </Stack>
                 </Card.Body>
-                <Card.Footer className="bg-white border-0 px-3 pb-3">
-                    <Stack direction="horizontal" gap={2}>
-                        <Link to={`/turno-detalle/${turno.id}`} className="btn btn-outline-secondary flex-grow-1">
-                            Ver detalle
-                        </Link>
-                        <Button
-                            onClick={() => onAtender(turno.id)}
-                            disabled={turno.estado === "atendido" || !paciente}
-                            variant="primary"
-                        >
-                            Llamar
-                        </Button>
-                    </Stack>
-                </Card.Footer>
             </Card>
         </Col>
     );
 };
-
-interface TurnoCardProps {
-    turno: ITurno;
-    onAtender: (idTurno: string) => void;
-}
 
 export default TurnoCard;

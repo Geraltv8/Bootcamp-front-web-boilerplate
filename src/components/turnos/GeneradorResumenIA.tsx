@@ -1,26 +1,26 @@
 import { useState } from 'react';
-import { Button, Alert, Spinner, Card, CardBody } from 'react-bootstrap';
-import clientesAxios from '../../config/axios';
+import { Button, Alert, Spinner, Card } from 'react-bootstrap';
 import { toast } from 'sonner';
+import getApiErrorMessage from '../../hooks/getApiErrorMessage';
+import useApiMutation from '../../hooks/useApiMutation';
+import type { AnalisisHistorial } from '../../types/Api.type';
 
 const GeneradorResumenIA = ({ notasCrudas }: { notasCrudas: string }) => {
-    const [cargandoIA, setCargandoIA] = useState(false);
-    const [analisis, setAnalisis] = useState<any>(null); // Idealmente tipado con la interfaz
+    const [analisis, setAnalisis] = useState<AnalisisHistorial | null>(null);
+    const { mutate: analizar, isLoading: cargandoIA } = useApiMutation<
+        { notasDelMedico: string },
+        AnalisisHistorial
+    >('post', '/ia/analizar');
 
     const solicitarAnalisis = async () => {
-        setCargandoIA(true);
         try {
-            // Consumimos nuestro Backend Proxy (que inyecta el JWT gracias al interceptor)
-            const respuesta = await clientesAxios.post('/ia/analizar', {
+            const resultado = await analizar({
                 notasDelMedico: notasCrudas
             });
-            
-            setAnalisis(respuesta.data.data);
-            toast.success("Análisis generado por Gemini");
-        } catch (error) {
-            toast.error("La IA está saturada. Intente de nuevo.");
-        } finally {
-            setCargandoIA(false);
+            setAnalisis(resultado);
+            toast.success('Análisis generado por Gemini');
+        } catch (error: unknown) {
+            toast.error(getApiErrorMessage(error, 'La IA está saturada. Intenta de nuevo.'));
         }
     };
 
@@ -32,7 +32,7 @@ const GeneradorResumenIA = ({ notasCrudas }: { notasCrudas: string }) => {
                 {!analisis ? (
                     <Button 
                         variant="outline-info" 
-                        onClick={solicitarAnalisis}
+                        onClick={() => void solicitarAnalisis()}
                         disabled={cargandoIA || !notasCrudas}
                     >
                         {cargandoIA ? (
