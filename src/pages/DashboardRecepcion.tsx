@@ -7,7 +7,7 @@ import clientesAxios from "../config/axios";
 import BuscadorTurnos from "../components/turnos/BuscadorTurnos";
 import TurnoCard from "../components/turnos/TurnoCard";
 import TurnoCardSkeleton from "../components/turnos/TurnoCardSkeleton";
-import { ITurno } from "../types/Turno.type";
+import { EstadoTurno, ITurno } from "../types/Turno.type";
 
 const DashboardRecepcion = () => {
     const [busqueda, setBusqueda] = useState<string>("");
@@ -23,7 +23,7 @@ const DashboardRecepcion = () => {
             await clientesAxios.patch(`/turnos/${idTurno}`);
 
             const turnosActualizados = turnos?.map(turno => {
-                if (turno.id === idTurno) return { ...turno, estado: "atendido" as const};
+                if (turno.id === idTurno) return { ...turno, estado: EstadoTurno.ATENDIDO};
                 return turno;
             });
             setTurnos(turnosActualizados || []);
